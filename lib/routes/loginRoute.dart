@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:fluttergithubapp/models/user.dart';
+import '../network/gitApi.dart';
 
 class LoginRoute extends StatefulWidget{
   @override
@@ -13,26 +15,25 @@ class _LoginRouteState extends State<LoginRoute>{
   TextEditingController _unameController = TextEditingController();
   TextEditingController _pwdController = TextEditingController();
 
-  void onLoginButtonClick(){
-    showLoginDialog();
+  @override
+  void initState() {
+    _unameController.text = "";
+    _pwdController.text = "";
+    super.initState();
   }
 
-  Future<bool> showLoginDialog(){
-    return showDialog(
-      context: context,
-      builder: (context){
-        return AlertDialog(
-          title: Text("提示"),
-          content: Text("内容正在开发，敬请期待"),
-          actions: <Widget>[
-            FlatButton(
-              onPressed: ()=>Navigator.of(context).pop(),
-              child: Text("确定"),
-            ),
-          ],
-        );
-      },
-    );
+  void onLoginButtonClick(){
+    //showLoginDialog();
+    String username = _unameController.text;
+    String pwd = _pwdController.text;
+    GitApi networkUtil = GitApi();
+    //Future<User> dataResponse = networkUtil.getUserPublicInfo(username);
+    Future<User> dataResponse1 = networkUtil.doLogin(username,pwd);
+
+    dataResponse1.then((user){
+      print(user.avatar_url);
+      Navigator.of(context).pushNamed("home_page",arguments: user);
+    });
   }
 
   @override
